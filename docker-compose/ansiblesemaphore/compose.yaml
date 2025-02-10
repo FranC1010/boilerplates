@@ -47,6 +47,7 @@ services:
       - ./inventory/:/inventory:ro
       - ./authorized-keys/:/authorized-keys:ro
       - ./config/:/etc/semaphore:rw
+      - ~/boilerplates/requirements.txt:/etc/semaphore/requirements.txt
     restart: unless-stopped
     depends_on:
       - mysql
