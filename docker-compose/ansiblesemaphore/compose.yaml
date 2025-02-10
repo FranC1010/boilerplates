@@ -1,4 +1,9 @@
 ---
+networks:
+  ansible-semaphore:
+    external: true
+    name: ansible-semaphore
+
 volumes:
   semaphore-mysql:
     driver: local
@@ -13,13 +18,15 @@ services:
       - MYSQL_DATABASE=semaphore
       - MYSQL_USER=semaphore
       - MYSQL_PASSWORD=secret-password  # change!
+    networks:
+      - ansible-semaphore
     restart: unless-stopped
   semaphore:
     container_name: ansiblesemaphore
     image: docker.io/semaphoreui/semaphore:v2.12.5
     user: "${UID}:${GID}"
     ports:
-      - 3000:3000
+      - 80:3000
     environment:
       - SEMAPHORE_DB_USER=semaphore
       - SEMAPHORE_DB_PASS=secret-password  # change!
@@ -32,8 +39,10 @@ services:
       - SEMAPHORE_ADMIN_NAME=admin
       - SEMAPHORE_ADMIN_EMAIL=admin@localhost
       - SEMAPHORE_ADMIN=admin
-      - SEMAPHORE_ACCESS_KEY_ENCRYPTION=  # add to your access key encryption !
+      - SEMAPHORE_ACCESS_KEY_ENCRYPTION=tklWnoLHZ6EQ4SoVWBv2wHbpksnqejsaMvBP+HUehos=  # add to your access key encryption !
       - ANSIBLE_HOST_KEY_CHECKING=false  # (optional) change to true if you want to enable host key checking
+    networks:
+      - ansible-semaphore
     volumes:
       - ./inventory/:/inventory:ro
       - ./authorized-keys/:/authorized-keys:ro
